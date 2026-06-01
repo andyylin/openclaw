@@ -144,7 +144,7 @@ describe("agent tool result middleware", () => {
     expect(listAgentToolResultMiddlewares("codex")).toHaveLength(0);
   });
 
-  it("rejects middleware from non-bundled plugins even when they declare the contract", () => {
+  it("allows middleware from non-bundled plugins when they declare the runtime contract", () => {
     const tmp = createTempDir();
     process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = "/nonexistent/bundled/plugins";
 
@@ -161,7 +161,7 @@ describe("agent tool result middleware", () => {
 } };`,
     });
 
-    const registry = loadOpenClawPlugins({
+    loadOpenClawPlugins({
       workspaceDir: tmp,
       onlyPluginIds: ["tool-result-middleware"],
       config: {
@@ -172,13 +172,7 @@ describe("agent tool result middleware", () => {
       },
     });
 
-    const diagnostic = findDiagnostic(
-      registry.diagnostics,
-      "tool-result-middleware",
-      "only bundled plugins can register agent tool result middleware",
-    );
-    expect(diagnostic?.level).toBe("error");
-    expect(listAgentToolResultMiddlewares("codex")).toHaveLength(0);
+    expect(listAgentToolResultMiddlewares("codex")).toHaveLength(1);
   });
 
   it("merges runtimes when a plugin registers the same middleware function twice", () => {

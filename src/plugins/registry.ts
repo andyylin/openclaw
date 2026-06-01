@@ -524,15 +524,6 @@ export function createPluginRegistry(registryParams: PluginRegistryParams) {
     handler: Parameters<OpenClawPluginApi["registerAgentToolResultMiddleware"]>[0],
     options: Parameters<OpenClawPluginApi["registerAgentToolResultMiddleware"]>[1],
   ) => {
-    if (record.origin !== "bundled") {
-      pushDiagnostic({
-        level: "error",
-        pluginId: record.id,
-        source: record.source,
-        message: "only bundled plugins can register agent tool result middleware",
-      });
-      return;
-    }
     if (typeof (handler as unknown) !== "function") {
       pushDiagnostic({
         level: "error",
